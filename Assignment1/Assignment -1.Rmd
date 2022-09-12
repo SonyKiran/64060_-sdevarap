@@ -1,0 +1,26 @@
+---
+title: "Assignment"
+author: "Sony"
+date: "2022-09-12"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(tinytex)
+getwd()
+setwd("C:/Users/devar/Documents/FML1/ASSIGNMENT1/Sample ")
+sony<-read.csv("sample1.csv")
+sony
+hist(sony$Height)
+plot(sony$Height,sony$Weight)
+summary(sony)
+summary(sony$bmi)
+sony1<-log10(sony$bmi)
+summary(sony1)
+
+```
