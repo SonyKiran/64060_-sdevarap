@@ -1,0 +1,73 @@
+---
+title: "FML Assignment 4"
+author: "Sony kiran"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(flexclust)
+library(cluster)
+library(tidyverse)  
+library(factoextra) 
+library(FactoMineR)
+library(ggcorrplot)
+getwd()
+setwd("C:/Users/devar/Documents/FML/Assignment4")
+pharma<- read.csv("Pharmaceuticals.csv")
+pharma1 <- pharma[3:11]
+head(pharma1)
+summary(pharma1)
+#Normalizing the data
+pharma2 <- scale(pharma1)
+row.names(pharma2) <- pharma[,1]
+distance <- get_dist(pharma2)
+corr <- cor(pharma2)
+fviz_nbclust(pharma2, kmeans, method = "silhouette")
+set.seed(1)
+k5 <- kmeans(pharma2, centers = 5, nstart = 25) # k = 5, number of restarts = 25
+k5$centers 
+k5$size  
+fviz_cluster(k5, data = pharma2)
+#elbow
+fviz_nbclust(pharma2, kmeans, method = "wss")
+#Manhattan
+set.seed(1)
+k51 = kcca(pharma2, k=5, kccaFamily("kmedians"))
+k51
+clusters_index <- predict(k51)
+dist(k51@centers)
+image(k51)
+points(pharma2, col=clusters_index, pch=19, cex=0.3)
+#QuestuionB
+pharma1 %>% mutate(Cluster = k5$cluster) %>% group_by(Cluster) %>% summarise_all("mean")
+clusplot(pharma2,k5$cluster, main="Clusters",color = TRUE, labels = 3,lines = 0)
+#Questionc
+pharma3 <- pharma[12:14] %>% mutate(Clusters=k5$cluster)
+ggplot(pharma3, mapping = aes(factor(Clusters), fill =Median_Recommendation))+geom_bar(position='dodge')+labs(x ='Clusters')
+ggplot(pharma3, mapping = aes(factor(Clusters),fill = Location))+geom_bar(position = 'dodge')+labs(x ='Clusters')
+ggplot(pharma3, mapping = aes(factor(Clusters),fill = Exchange))+geom_bar(position = 'dodge')+labs(x ='Clusters')
+#Question4
+#Cluster 1: Secure
+#Cluster 2: Very Hazardous
+#Cluster 3: Affordable
+#Cluster 4: Runaway 
+#Cluster 5: Secure
+
+
+```
+```
+
+
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
